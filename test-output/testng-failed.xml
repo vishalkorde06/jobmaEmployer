@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite thread-count="1" name="Failed suite [Suite]">
+  <listeners>
+    <listener class-name="automation.customlistener.Listeners"/>
+  </listeners>
+  <test thread-count="1" name="Jobma_Testing(failed)">
+    <parameter name="browser" value="chrome"/>
+    <classes>
+      <class name="automation.testclass.JobmaTest">
+        <methods>
+          <include name="endExtent"/>
+          <include name="To_Verify_That_User_Is_Able_To_Login_JobmaEmployer"/>
+          <include name="setExtent"/>
+          <include name="tearDown"/>
+          <include name="init"/>
+        </methods>
+      </class> <!-- automation.testclass.JobmaTest -->
+    </classes>
+  </test> <!-- Jobma_Testing(failed) -->
+</suite> <!-- Failed suite [Suite] -->

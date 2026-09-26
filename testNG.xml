@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.1.dtd">
+<suite name="Suite" parallel="none" thread-count="1">
+    <listeners>
+        <listener class-name="automation.customlistener.Listeners"/>
+    </listeners>
+    <test name="Jobma_Testing">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="automation.testclass.JobmaTest"/>
+            <!-- <class name="automation.testclass.JobmaFooterLinksValidation"/> -->
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2026-09-26T15:24:04 IST" name="Suite" finished-at="2026-09-26T15:24:59 IST" duration-ms="54728">
+    <groups>
+    </groups>
+    <test started-at="2026-09-26T15:24:04 IST" name="Jobma_Testing" finished-at="2026-09-26T15:24:59 IST" duration-ms="54728">
+      <class name="automation.testclass.JobmaTest">
+        <test-method is-config="true" signature="setExtent()[pri:0, instance:automation.testclass.JobmaTest@1afd44cb]" started-at="2026-09-26T15:24:04 IST" name="setExtent" finished-at="2026-09-26T15:24:04 IST" duration-ms="343" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setExtent -->
+        <test-method is-config="true" signature="init(java.lang.String)[pri:0, instance:automation.testclass.JobmaTest@1afd44cb]" started-at="2026-09-26T15:24:04 IST" name="init" finished-at="2026-09-26T15:24:14 IST" duration-ms="9732" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- init -->
+        <test-method signature="To_Verify_That_User_Is_Able_To_Login_JobmaEmployer()[pri:0, instance:automation.testclass.JobmaTest@1afd44cb]" started-at="2026-09-26T15:24:14 IST" name="To_Verify_That_User_Is_Able_To_Login_JobmaEmployer" finished-at="2026-09-26T15:24:58 IST" duration-ms="43893" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- To_Verify_That_User_Is_Able_To_Login_JobmaEmployer -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:automation.testclass.JobmaTest@1afd44cb]" started-at="2026-09-26T15:24:58 IST" name="tearDown" finished-at="2026-09-26T15:24:58 IST" duration-ms="255" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="endExtent()[pri:0, instance:automation.testclass.JobmaTest@1afd44cb]" started-at="2026-09-26T15:24:58 IST" name="endExtent" finished-at="2026-09-26T15:24:59 IST" duration-ms="325" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- endExtent -->
+      </class> <!-- automation.testclass.JobmaTest -->
+    </test> <!-- Jobma_Testing -->
+  </suite> <!-- Suite -->
+</testng-results>
