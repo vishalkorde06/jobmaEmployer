@@ -16,7 +16,7 @@ pipeline {
             }
         }
 
-        stage('Test Ececution') {
+        stage('Test Execution') {
             steps {
                 bat 'mvn clean test -Dbrowser=chrome'
             }
@@ -41,16 +41,14 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Locate the latest generated HTML report using standard Java file handling
+                // Safely find the latest HTML report using native Jenkins step (no File I/O sandbox block)
                 def latestReport = ''
-                def reportDir = new File("${WORKSPACE}/ExtentReports")
+                def files = findFiles(glob: 'ExtentReports/*.html')
                 
-                if (reportDir.exists()) {
-                    def files = reportDir.listFiles({ dir, name -> name.endsWith('.html') } as FileFilter)
-                    if (files && files.length > 0) {
-                        def latestFile = files.max { it.lastModified() }
-                        latestReport = "ExtentReports/${latestFile.name}"
-                    }
+                if (files && files.length > 0) {
+                    // Sort files by modification time and pick the latest one
+                    def sortedFiles = files.sort { it.lastModified }
+                    latestReport = "ExtentReports/${sortedFiles[-1].name}"
                 }
 
                 emailext (
@@ -65,7 +63,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: latestReport // Attaches ONLY the single latest report safely
+                    attachmentsPattern: latestReport // Attaches ONLY the newest report safely
                 )
             }
         }
