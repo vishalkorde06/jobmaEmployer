@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-    // Automatically triggers execution every day at 9:00 AM
     triggers {
         cron('0 9 * * *')
     }
@@ -17,20 +16,9 @@ pipeline {
             }
         }
 
-        stage('Parallel Execution') {
-            parallel {
-                stage('Chrome Execution') {
-                    steps {
-                        // Pass browser parameter to Maven
-                        bat 'mvn clean test -Dbrowser=chrome'
-                    }
-                }
-                //stage('Edge Execution') {
-                    //steps {
-                        // Pass browser parameter to Maven
-                     //   bat 'mvn clean test -Dbrowser=edge'
-                    //}
-                //}
+        stage('Run Automation Tests') {
+            steps {
+                bat 'mvn clean test -Dbrowser=chrome'
             }
         }
 
@@ -64,7 +52,8 @@ pipeline {
                     <p><b>Jenkins Dashboard Link:</b> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
                     """,
                     mimeType: 'text/html',
-                    attachLog: true
+                    attachLog: true,
+                    attachmentsPattern: 'ExtentReports/*.html'  // Added to attach the Extent Report
                 )
             }
         }
