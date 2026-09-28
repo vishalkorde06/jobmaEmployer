@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-
 pipeline {
     agent any
 
@@ -43,12 +41,13 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Format the exact timestamp matching your Java getCurrentTime() method
-                def dateFormat = new SimpleDateFormat("EEEE_yyyy_MM_dd_HH_mm")
-                def formattedTimestamp = dateFormat.format(new Date())
+                // Fetch only the latest created HTML file name using CMD directory sorting
+                def latestFile = bat(
+                    script: '@for /f "delims=" %i in (\'dir /b /o:d ExtentReports\\*.html\') do @set LAST=%i\n@echo %LAST%', 
+                    returnStdout: true
+                ).trim().lines().collect().last().trim()
                 
-                // Construct the exact filename pattern matching your Java setExtent() method
-                def latestReportPath = "ExtentReports/Report_${formattedTimestamp}.html"
+                def latestReportPath = "ExtentReports/${latestFile}"
 
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
