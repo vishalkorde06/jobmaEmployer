@@ -41,7 +41,7 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Safely obtain the latest report filename matching your Java timestamp pattern
+                // 1. Safely find the latest HTML file path
                 def latestReportPath = ''
                 try {
                     def folder = new File("${WORKSPACE}/ExtentReports")
@@ -53,9 +53,15 @@ pipeline {
                         }
                     }
                 } catch (Exception e) {
-                    echo "Could not dynamically sort reports: ${e.message}"
+                    echo "File detection note: ${e.message}"
                 }
 
+                // 2. Archive the specific latest report so Jenkins recognizes it as an attachment source
+                if (latestReportPath != '') {
+                    archiveArtifacts artifacts: latestReportPath, onlyIfSuccessful: false
+                }
+
+                // 3. Send the email with the attached report
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
                     subject: "Automation Report - Job: ${JOB_NAME} [Build #${BUILD_NUMBER}] - Status: ${buildStatus}",
@@ -68,7 +74,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: latestReportPath // Attaches ONLY the newest Extent Report file
+                    attachmentsPattern: latestReportPath
                 )
             }
         }
