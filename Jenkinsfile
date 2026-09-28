@@ -41,15 +41,9 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Use a safe Windows batch command to capture the newest HTML file name dynamically
-                def latestFile = ''
-                try {
-                    latestFile = bat(script: 'for /f "delims=" %i in (\'dir /b /o:-d ExtentReports\\*.html 2^>nul\') do @echo %i&goto :break', returnStdout: true).trim()
-                } catch (Exception e) {
-                    latestFile = ''
-                }
-                
-                def latestReport = (latestFile != '') ? "ExtentReports/${latestFile}" : ''
+                // Fallback approach: find latest file using standard pattern matching
+                // If your file has a static name or wildcard, specify it clearly here:
+                def reportPattern = "ExtentReports/*.html"
 
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
@@ -63,7 +57,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: latestReport // Attaches ONLY the newest report securely
+                    attachmentsPattern: reportPattern 
                 )
             }
         }
