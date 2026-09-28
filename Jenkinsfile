@@ -1,13 +1,12 @@
 pipeline {
     agent any
 
-  // Triggers execution every day at 9 AM
+    // Automatically triggers execution every day at 9:00 AM
     triggers {
         cron('0 9 * * *')
     }
 
     environment {
-        // Updated to your email address
         NOTIFICATION_EMAIL = 'vishalkorde42@gmail.com'
     }
 
@@ -18,10 +17,20 @@ pipeline {
             }
         }
 
-        stage('Run Automation Tests') {
-            steps {
-                // If Jenkins agent runs on Windows, change 'sh' to 'bat'
-                bat 'mvn clean test' 
+        stage('Parallel Execution') {
+            parallel {
+                stage('Chrome Execution') {
+                    steps {
+                        // Pass browser parameter to Maven
+                        bat 'mvn clean test -Dbrowser=chrome'
+                    }
+                }
+                stage('Edge Execution') {
+                    steps {
+                        // Pass browser parameter to Maven
+                        bat 'mvn clean test -Dbrowser=edge'
+                    }
+                }
             }
         }
 
@@ -31,9 +40,9 @@ pipeline {
                     allowMissing: true,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
-                    reportDir: 'target/surefire-reports',
-                    reportFiles: 'index.html',
-                    reportName: 'Test Execution Report'
+                    reportDir: 'ExtentReports',
+                    reportFiles: '*.html',
+                    reportName: 'Extent Test Execution Report'
                 ])
             }
         }
@@ -41,19 +50,23 @@ pipeline {
 
     post {
         always {
-            emailext (
-                to: "${NOTIFICATION_EMAIL}",
-                subject: "Automation Execution Report - Job: ${JOB_NAME} [Build #${BUILD_NUMBER}] - Status: ${currentBuild.result ?: 'SUCCESS'}",
-                body: """
-                <h3>Automation Suite Results</h3>
-                <p><b>Repository:</b> jobmaEmployer</p>
-                <p><b>Build Number:</b> #${BUILD_NUMBER}</p>
-                <p><b>Status:</b> ${currentBuild.result ?: 'SUCCESS'}</p>
-                <p><b>Jenkins Build Link:</b> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
-                """,
-                mimeType: 'text/html',
-                attachLog: true
-            )
+            script {
+                def buildStatus = currentBuild.result ?: 'SUCCESS'
+                
+                emailext (
+                    to: "${NOTIFICATION_EMAIL}",
+                    subject: "Parallel Automation Report - Job: ${JOB_NAME} [Build #${BUILD_NUMBER}] - Status: ${buildStatus}",
+                    body: """
+                    <h3>Parallel Execution Suite Results (Chrome & Edge)</h3>
+                    <p><b>Repository:</b> jobmaEmployer</p>
+                    <p><b>Build Number:</b> #${BUILD_NUMBER}</p>
+                    <p><b>Execution Status:</b> ${buildStatus}</p>
+                    <p><b>Jenkins Dashboard Link:</b> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
+                    """,
+                    mimeType: 'text/html',
+                    attachLog: true
+                )
+            }
         }
     }
 }
