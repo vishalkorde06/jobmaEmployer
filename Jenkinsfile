@@ -55,9 +55,9 @@ pipeline {
                 
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
-                    subject: "Parallel Automation Report - Job: ${JOB_NAME} [Build #${BUILD_NUMBER}] - Status: ${buildStatus}",
+                    subject: "Automation Report - Job: ${JOB_NAME} [Build #${BUILD_NUMBER}] - Status: ${buildStatus}",
                     body: """
-                    <h3>Parallel Execution Suite Results (Chrome & Edge)</h3>
+                    <h3>Execution Suite Results (Chrome)</h3>
                     <p><b>Repository:</b> jobmaEmployer</p>
                     <p><b>Build Number:</b> #${BUILD_NUMBER}</p>
                     <p><b>Execution Status:</b> ${buildStatus}</p>
