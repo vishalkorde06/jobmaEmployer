@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 pipeline {
     agent any
 
@@ -41,9 +43,12 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Fallback approach: find latest file using standard pattern matching
-                // If your file has a static name or wildcard, specify it clearly here:
-                def reportPattern = "ExtentReports/*.html"
+                // Format the exact timestamp matching your Java getCurrentTime() method
+                def dateFormat = new SimpleDateFormat("EEEE_yyyy_MM_dd_HH_mm")
+                def formattedTimestamp = dateFormat.format(new Date())
+                
+                // Construct the exact filename pattern matching your Java setExtent() method
+                def latestReportPath = "ExtentReports/Report_${formattedTimestamp}.html"
 
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
@@ -57,7 +62,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: reportPattern 
+                    attachmentsPattern: latestReportPath
                 )
             }
         }
