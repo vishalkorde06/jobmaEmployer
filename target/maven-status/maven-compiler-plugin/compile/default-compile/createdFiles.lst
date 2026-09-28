@@ -5,4 +5,5 @@ automation\pageobjectclass\JobmaLandingPage.class
 automation\testclass\JobmaFooterLinksValidation.class
 automation\excelread\ExcelUtils.class
 automation\testclass\JobmaTest.class
+automation\testclass\MobileApplication.class
 automation\pageobjectclass\InterviewPages.class
