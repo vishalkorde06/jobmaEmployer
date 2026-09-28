@@ -115,14 +115,13 @@ public class TestBase {
 			WebDriverManager.chromedriver().setup();
 			ChromeOptions chromeOptions = new ChromeOptions();
 			chromeOptions.addArguments("--incognito"); // Example option
-			driver = new ChromeDriver(chromeOptions);
+		 	driver = new ChromeDriver(chromeOptions);
 			break;
 		case "edge":
 
-			System.setProperty("webdriver.edge.driver", projectPath + "/src/automation/browser/msedgedriver.exe");
-			// WebDriverManager.edgedriver().setup();
+			WebDriverManager.edgedriver().setup();
 			EdgeOptions edgeOptions = new EdgeOptions();
-			// edgeOptions.addArguments("--incognito");
+			edgeOptions.addArguments("--incognito");
 			driver = new EdgeDriver(edgeOptions);
 
 			break;
