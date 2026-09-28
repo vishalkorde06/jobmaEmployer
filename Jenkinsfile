@@ -41,6 +41,16 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
+                // Locate the latest generated HTML report file
+                def reports = findFiles(glob: 'ExtentReports/*.html')
+                def latestReport = ''
+
+                if (reports.length > 0) {
+                    // Sort files by last modified timestamp and select the newest one
+                    reports.sort { it.lastModified }
+                    latestReport = "ExtentReports/${reports[-1].name}"
+                }
+
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
                     subject: "Automation Report - Job: ${JOB_NAME} [Build #${BUILD_NUMBER}] - Status: ${buildStatus}",
@@ -53,7 +63,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: 'ExtentReports/*.html'  // Added to attach the Extent Report
+                    attachmentsPattern: latestReport // Attaches ONLY the single latest report
                 )
             }
         }
