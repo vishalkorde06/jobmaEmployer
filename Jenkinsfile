@@ -41,13 +41,20 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Fetch only the latest created HTML file name using CMD directory sorting
-                def latestFile = bat(
-                    script: '@for /f "delims=" %i in (\'dir /b /o:d ExtentReports\\*.html\') do @set LAST=%i\n@echo %LAST%', 
-                    returnStdout: true
-                ).trim().lines().collect().last().trim()
-                
-                def latestReportPath = "ExtentReports/${latestFile}"
+                // Safely obtain the latest report filename matching your Java timestamp pattern
+                def latestReportPath = ''
+                try {
+                    def folder = new File("${WORKSPACE}/ExtentReports")
+                    if (folder.exists()) {
+                        def htmlFiles = folder.listFiles().findAll { it.name.endsWith('.html') }
+                        if (htmlFiles) {
+                            def newestFile = htmlFiles.max { it.lastModified() }
+                            latestReportPath = "ExtentReports/${newestFile.name}"
+                        }
+                    }
+                } catch (Exception e) {
+                    echo "Could not dynamically sort reports: ${e.message}"
+                }
 
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
@@ -61,7 +68,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: latestReportPath
+                    attachmentsPattern: latestReportPath // Attaches ONLY the newest Extent Report file
                 )
             }
         }
