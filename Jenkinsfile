@@ -41,14 +41,16 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Locate the latest generated HTML report file
-                def reports = findFiles(glob: 'ExtentReports/*.html')
+                // Locate the latest generated HTML report using standard Java file handling
                 def latestReport = ''
-
-                if (reports.length > 0) {
-                    // Sort files by last modified timestamp and select the newest one
-                    reports.sort { it.lastModified }
-                    latestReport = "ExtentReports/${reports[-1].name}"
+                def reportDir = new File("${WORKSPACE}/ExtentReports")
+                
+                if (reportDir.exists()) {
+                    def files = reportDir.listFiles({ dir, name -> name.endsWith('.html') } as FileFilter)
+                    if (files && files.length > 0) {
+                        def latestFile = files.max { it.lastModified() }
+                        latestReport = "ExtentReports/${latestFile.name}"
+                    }
                 }
 
                 emailext (
@@ -63,7 +65,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: latestReport // Attaches ONLY the single latest report
+                    attachmentsPattern: latestReport // Attaches ONLY the single latest report safely
                 )
             }
         }
