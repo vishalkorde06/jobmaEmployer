@@ -41,15 +41,15 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // Safely find the latest HTML report using native Jenkins step (no File I/O sandbox block)
-                def latestReport = ''
-                def files = findFiles(glob: 'ExtentReports/*.html')
-                
-                if (files && files.length > 0) {
-                    // Sort files by modification time and pick the latest one
-                    def sortedFiles = files.sort { it.lastModified }
-                    latestReport = "ExtentReports/${sortedFiles[-1].name}"
+                // Use a safe Windows batch command to capture the newest HTML file name dynamically
+                def latestFile = ''
+                try {
+                    latestFile = bat(script: 'for /f "delims=" %i in (\'dir /b /o:-d ExtentReports\\*.html 2^>nul\') do @echo %i&goto :break', returnStdout: true).trim()
+                } catch (Exception e) {
+                    latestFile = ''
                 }
+                
+                def latestReport = (latestFile != '') ? "ExtentReports/${latestFile}" : ''
 
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
@@ -63,7 +63,7 @@ pipeline {
                     """,
                     mimeType: 'text/html',
                     attachLog: true,
-                    attachmentsPattern: latestReport // Attaches ONLY the newest report safely
+                    attachmentsPattern: latestReport // Attaches ONLY the newest report securely
                 )
             }
         }
