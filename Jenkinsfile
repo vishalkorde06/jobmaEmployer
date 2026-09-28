@@ -41,27 +41,20 @@ pipeline {
             script {
                 def buildStatus = currentBuild.result ?: 'SUCCESS'
                 
-                // 1. Safely find the latest HTML file path
+                // 1. Locate all HTML reports safely in the Workspace
+                def reports = findFiles(glob: 'ExtentReports/*.html')
+                
                 def latestReportPath = ''
-                try {
-                    def folder = new File("${WORKSPACE}/ExtentReports")
-                    if (folder.exists()) {
-                        def htmlFiles = folder.listFiles().findAll { it.name.endsWith('.html') }
-                        if (htmlFiles) {
-                            def newestFile = htmlFiles.max { it.lastModified() }
-                            latestReportPath = "ExtentReports/${newestFile.name}"
-                        }
-                    }
-                } catch (Exception e) {
-                    echo "File detection note: ${e.message}"
+                if (reports.length > 0) {
+                    // Sort by last modified timestamp to get ONLY the latest file
+                    def latestFile = reports.max { it.lastModified }
+                    latestReportPath = "ExtentReports/${latestFile.name}"
+                    echo "Attaching report: ${latestReportPath}"
+                } else {
+                    echo "WARNING: No HTML reports found inside ExtentReports directory!"
                 }
 
-                // 2. Archive the specific latest report so Jenkins recognizes it as an attachment source
-                if (latestReportPath != '') {
-                    archiveArtifacts artifacts: latestReportPath, onlyIfSuccessful: false
-                }
-
-                // 3. Send the email with the attached report
+                // 2. Send email with the attached report
                 emailext (
                     to: "${NOTIFICATION_EMAIL}",
                     subject: "Automation Report - Job: ${JOB_NAME} [Build #${BUILD_NUMBER}] - Status: ${buildStatus}",
