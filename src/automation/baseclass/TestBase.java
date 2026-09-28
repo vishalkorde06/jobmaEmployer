@@ -108,28 +108,31 @@ public class TestBase {
 	}
 
 	public void selectBrowser(String browser) {
-		switch (browser.toLowerCase()) {
-		case "chrome":
-			// System.setProperty("webdriver.edge.driver", projectPath +
-			// "\\src\\automation\\browser\\chromedriver.exe");
-			WebDriverManager.chromedriver().setup();
-			ChromeOptions chromeOptions = new ChromeOptions();
-			chromeOptions.addArguments("--incognito"); // Example option
-		 	driver = new ChromeDriver(chromeOptions);
-			break;
-		case "edge":
+	    switch (browser.toLowerCase()) {
+	    case "chrome":
+	        // Modern selenium automatically resolves drivers, setup() is optional
+	        WebDriverManager.chromedriver().setup();
+	        ChromeOptions chromeOptions = new ChromeOptions();
+	        chromeOptions.addArguments("--incognito");
+	        driver = new ChromeDriver(chromeOptions);
+	        break;
 
-			WebDriverManager.edgedriver().setup();
-			EdgeOptions edgeOptions = new EdgeOptions();
-			edgeOptions.addArguments("--incognito");
-			driver = new EdgeDriver(edgeOptions);
+	    case "edge":
+	        // Removed WebDriverManager.edgedriver().setup() to fix msedgedriver.azureedge.net error
+	        EdgeOptions edgeOptions = new EdgeOptions();
+	        edgeOptions.addArguments("-inprivate"); // Edge uses '-inprivate' instead of '--incognito'
+	        driver = new EdgeDriver(edgeOptions);
+	        break;
 
-			break;
-		}
-		driver.manage().deleteAllCookies();
-		driver.manage().window().maximize();
+	    default:
+	        throw new IllegalArgumentException("Unsupported browser: " + browser);
+	    }
+
+	    if (driver != null) {
+	        driver.manage().deleteAllCookies();
+	        driver.manage().window().maximize();
+	    }
 	}
-
 	public void getURL(String url) {
 		driver.get(url);
 	}
