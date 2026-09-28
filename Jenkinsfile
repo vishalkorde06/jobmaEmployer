@@ -25,12 +25,12 @@ pipeline {
                         bat 'mvn clean test -Dbrowser=chrome'
                     }
                 }
-                stage('Edge Execution') {
-                    steps {
+                //stage('Edge Execution') {
+                    //steps {
                         // Pass browser parameter to Maven
-                        bat 'mvn clean test -Dbrowser=edge'
-                    }
-                }
+                     //   bat 'mvn clean test -Dbrowser=edge'
+                    //}
+                //}
             }
         }
 
