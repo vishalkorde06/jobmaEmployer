@@ -16,13 +16,13 @@ pipeline {
             }
         }
 
-        stage('Run Automation Tests') {
+        stage('Test Ececution') {
             steps {
                 bat 'mvn clean test -Dbrowser=chrome'
             }
         }
 
-        stage('Publish Execution Reports') {
+        stage('Publish Reports') {
             steps {
                 publishHTML(target: [
                     allowMissing: true,
